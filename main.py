@@ -2,10 +2,11 @@ from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes, ConversationHandler
 from telegram.request import HTTPXRequest
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = "8783201940:AAFC2JDZSVfT8jFa3uxBbXRk6D5e0d-Mo4Q"
+TOKEN = os.getnev("BOT_TOKEN")
 proxy_url = "socks5://127.0.0.1:10808"
 request = HTTPXRequest(proxy=proxy_url)
 
