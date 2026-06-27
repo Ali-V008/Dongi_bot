@@ -6,7 +6,7 @@ import os
 
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = os.getnev("BOT_TOKEN")
+TOKEN = os.getnev("TOKEN")
 proxy_url = "socks5://127.0.0.1:10808"
 request = HTTPXRequest(proxy=proxy_url)
 
