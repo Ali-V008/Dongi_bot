@@ -1,14 +1,13 @@
+import os
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, CallbackQueryHandler, filters, ContextTypes, ConversationHandler
 from telegram.request import HTTPXRequest
 import logging
-import os
 
 logging.basicConfig(level=logging.INFO)
 
-TOKEN = os.getnev("TOKEN")
-proxy_url = "socks5://127.0.0.1:10808"
-request = HTTPXRequest(proxy=proxy_url)
+TOKEN = os.getenv("TOKEN")
+proxy_url = os.getenv("PROXY_URL")
 
 # مراحل مکالمه
 ADDING_USERS = 1
@@ -332,7 +331,6 @@ async def edit_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         return
 
-    # ریست حافظه موقت
     context.user_data["temp_edit"] = {"shares": {}, "paids": {}}
 
     await query.edit_message_text(
@@ -393,7 +391,6 @@ async def edit_value_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
     task = data[chat_id]["tasks"][task_index]
     users = data[chat_id]["users"]
 
-    # ذخیره تو حافظه موقت
     if field == "share":
         context.user_data["temp_edit"]["shares"][user] = value
     else:
@@ -413,7 +410,6 @@ async def confirm_edit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     task = data[chat_id]["tasks"][task_index]
     temp = context.user_data.get("temp_edit", {"shares": {}, "paids": {}})
 
-    # اعمال تغییرات
     for user, val in temp["shares"].items():
         task["shares"][user] = val
     for user, val in temp["paids"].items():
@@ -511,7 +507,11 @@ async def restart_confirmed(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # اجرای بات
 # ───────────────────────────────
 
-app = ApplicationBuilder().token(TOKEN).request(request).build()
+if proxy_url:
+    req = HTTPXRequest(proxy=proxy_url)
+    app = ApplicationBuilder().token(TOKEN).request(req).build()
+else:
+    app = ApplicationBuilder().token(TOKEN).build()
 
 conv_handler = ConversationHandler(
     entry_points=[
